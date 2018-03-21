@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine
 from sqlalchemy import Integer, String, DateTime, Column, ForeignKey, Enum
-from sqlalchemy.orm import scoped_session, sessionmaker, relationship
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, relationship
 
 Base = declarative_base()
 
@@ -11,8 +11,6 @@ class User(Base):
 
     name = Column(String, primary_key=True)
     token = Column(String())
-    client_id = Column(String())
-    client_secret = Column(String())
     auth_token = Column(String)
     refresh_token = Column(String)
     token_valid = Column(DateTime)

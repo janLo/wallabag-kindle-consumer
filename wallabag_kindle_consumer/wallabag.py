@@ -32,15 +32,15 @@ def make_tags(tag):
 
 
 class Wallabag:
-    def __init__(self, host_url):
-        self.url = host_url
+    def __init__(self, config):
+        self.config = config
         self.tag = "kindle"
         self.tags = make_tags(self.tag)
 
     async def get_token(self, user, passwd):
         params = {'grant_type': 'password',
-                  'client_id': user.client_id,
-                  'client_secret': user.client_secret,
+                  'client_id': self.config.client_id,
+                  'client_secret': self.config.client_secret,
                   'username': user.name,
                   'password': passwd}
 
@@ -60,8 +60,8 @@ class Wallabag:
     async def refresh_token(self, user):
         params = {'grant_type': 'refresh_token',
                   'client_id': user.client_id,
-                  'client_secret': user.client_secret,
-                  'refresh_token': user.refresh_token,
+                  'client_secret': self.config.client_secret,
+                  'refresh_token': self.config.refresh_token,
                   'username': user.name}
 
         async with aiohttp.ClientSession() as session:
@@ -84,7 +84,7 @@ class Wallabag:
         return params
 
     def _url(self, url):
-        return self.url + url
+        return self.config.wallabag_host + url
 
     async def fetch_entries(self, user):
         if user.auth_token is None:
