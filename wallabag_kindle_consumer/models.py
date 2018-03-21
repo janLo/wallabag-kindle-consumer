@@ -31,14 +31,30 @@ class Job(Base):
     format = Column(Enum('pdf', 'mobi'))
 
 
-def session_maker(uri):
+class ContextSession:
+    def __init__(self, session_maker):
+        self.session_maker = session_maker
+
+    def __enter__(self):
+        self.session = self.session_maker()
+        return self.session
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
+
+
+def context_session(config):
+    return ContextSession(session_maker(config))
+
+
+def session_maker(config):
     Session = sessionmaker(autocommit=False,
                            autoflush=False,
-                           bind=create_engine(uri))
+                           bind=create_engine(config.db_uri))
     return Session
 
 
-def re_create_db(uri):
-    engine = create_engine(uri)
+def re_create_db(config):
+    engine = create_engine(config.db_uri)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
