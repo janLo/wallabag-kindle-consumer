@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from logbook import Logger
 from sqlalchemy import func
 
-from models import User
+from wallabag_kindle_consumer.models import User
 
 logger = Logger(__name__)
 

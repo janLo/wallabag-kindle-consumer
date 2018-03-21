@@ -4,7 +4,7 @@ import asyncio
 from logbook import Logger
 from sqlalchemy.orm import joinedload
 
-from models import User, Job
+from wallabag_kindle_consumer.models import User, Job
 
 logger = Logger(__name__)
 
