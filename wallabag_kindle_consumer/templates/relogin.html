@@ -3,6 +3,18 @@
 {% import 'macros.html' as forms %}
 
 {% block body %}
+    <ul class="nav nav-pills nav-fill mb-3">
+        <li class="nav-item">
+            <a class="nav-link" href="/">Add User</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if action == "update" %} active{% endif %}" href="/{% if action == "update" %}#{% else %}update{% endif %}">Refresh User</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link{% if action == "delete" %} active{% endif %}" href="/{% if action == "delete" %}#{% else %}delete{% endif %}">Delete User</a>
+        </li>
+    </ul>
+
     {{ forms.messages(errors=errors, messages=messages) }}
 
     <div class="card">
