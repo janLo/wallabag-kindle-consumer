@@ -42,5 +42,5 @@ class Consumer:
             await asyncio.gather(*jobs)
             self.session.commit()
 
-            asyncio.sleep(self.interval)
+            await asyncio.sleep(self.interval)
 
