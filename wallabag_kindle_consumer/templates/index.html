@@ -4,21 +4,19 @@
 
 {% block body %}
 
+    {{ forms.messages(errors=errors, messages=messages) }}
+
     <div class="card">
         <div class="card-header">Add or edit an account</div>
         <div class="card-body">
-            <form method="post">
+            <form method="post" action="/">
                 <div class="row">
-                    {{ forms.input('user', "Username", description='Your wallabag username at ' + wallabag_host) }}
-                    {{ forms.input('password', "Password", type='password', description='Your wallabag password at ' + wallabag_host + ". The password will not be stored") }}
+                    {{ forms.input('username', "Username", description='Your wallabag username at ' + wallabag_host, data=data, errors=errors) }}
+                    {{ forms.input('password', "Password", type='password', description='Your wallabag password at ' + wallabag_host + ". The password will not be stored", data=data, errors=errors) }}
                 </div>
                 <div class="row">
-                    {{ forms.input('clientId', "Client id", description='A valid client id') }}
-                    {{ forms.input('clientSecret', "Client secret", description='A valid client secret ' + wallabag_host) }}
-                </div>
-                <div class="row">
-                    {{ forms.input('kindleEmail', "Kindle Email", type='email', description='Your kindle email addess ' + wallabag_host) }}
-                    {{ forms.input('notifyEmail', "Alt. Email",type='email', description='An alternative email where we can send any problems. ' + wallabag_host) }}
+                    {{ forms.input('kindleEmail', "Kindle Email", type='email', description='Your kindle email addess ' + wallabag_host, data=data, errors=errors) }}
+                    {{ forms.input('notifyEmail', "Alt. Email",type='email', description='An alternative email where we can send any problems. ' + wallabag_host, data=data, errors=errors) }}
                 </div>
                 <div class="row">
                     <div class="col-lg">
