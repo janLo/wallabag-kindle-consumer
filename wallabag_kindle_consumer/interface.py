@@ -5,10 +5,13 @@ import aiohttp_jinja2
 import jinja2
 from aiohttp import web
 
+from logbook import Logger
 from email_validator import validate_email, EmailNotValidError
 
 from . import wallabag
 from . import models
+
+logger = Logger(__name__)
 
 
 class Validator:
@@ -133,8 +136,9 @@ class IndexView(ViewBase):
                 else:
                     session.add(user)
                     session.commit()
-                    self._add_message("User successfully registered")
+                    self._add_message("User {user} successfully registered".format(user=validator.username))
                     self._set_data({})
+                    logger.info("User {user} registered", user=validator.username)
 
         return self._template({})
 
@@ -177,5 +181,5 @@ class App:
         web.run_app(self.app, host=self.config.interface_host, port=self.config.interface_port)
 
     async def register_server(self, loop):
-        await loop.create_server(self.app.make_handler(),
+        await loop.create_server(self.app.make_handler(access_log=logger),
                                  self.config.interface_host, self.config.interface_port)
