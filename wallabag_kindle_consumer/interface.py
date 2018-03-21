@@ -143,14 +143,65 @@ class IndexView(ViewBase):
         return self._template({})
 
 
-@aiohttp_jinja2.template("relogin.html")
-def re_login(request):
-    pass
+class ReLoginView(ViewBase):
+    @aiohttp_jinja2.template("relogin.html")
+    async def get(self):
+        return self._template({'action': 'update', 'description': 'Refresh'})
+
+    @aiohttp_jinja2.template("relogin.html")
+    async def post(self):
+        data = await self.request.post()
+        self._set_data(data)
+
+        validator = Validator(self.request.app.loop, data)
+        await validator.validate_credentials()
+        self._add_errors(validator.errors)
+
+        if validator.success:
+            with self._session as session:
+                user = session.query(models.User).filter(models.User.name == validator.username).first()
+                if user is None:
+                    self._add_errors({'user': 'User not registered'})
+                else:
+                    if await self._wallabag.get_token(user, validator.password):
+                        session.commit()
+                        self._add_message("User {user} successfully updated.".format(user=validator.username))
+                        logger.info("User {user} successfully updated.", user=user)
+                    else:
+                        self._add_errors({'auth': "Authentication against wallabag server failed"})
+
+        return self._template({'action': 'update', 'description': 'Refresh'})
 
 
-@aiohttp_jinja2.template("index.html")
-def delete_user(request):
-    pass
+class DeleteView(ViewBase):
+    @aiohttp_jinja2.template("relogin.html")
+    async def get(self):
+        return self._template({'action': 'delete', 'description': 'Delete'})
+
+    @aiohttp_jinja2.template("relogin.html")
+    async def post(self):
+        data = await self.request.post()
+        self._set_data(data)
+
+        validator = Validator(self.request.app.loop, data)
+        await validator.validate_credentials()
+        self._add_errors(validator.errors)
+
+        if validator.success:
+            with self._session as session:
+                user = session.query(models.User).filter(models.User.name == validator.username).first()
+                if user is None:
+                    self._add_errors({'user': 'User not registered'})
+                else:
+                    if await self._wallabag.get_token(user, validator.password):
+                        session.delete(user)
+                        session.commit()
+                        self._add_message("User {user} successfully deleted.".format(user=validator.username))
+                        logger.info("User {user} successfully deleted.", user=user)
+                    else:
+                        self._add_errors({'auth': "Authentication against wallabag server failed"})
+
+        return self._template({'action': 'delete', 'description': 'Delete'})
 
 
 class App:
@@ -176,6 +227,8 @@ class App:
                                    path=os.path.join(os.path.dirname(__file__), 'static'),
                                    name='static')
         self.app.router.add_view("/", IndexView)
+        self.app.router.add_view("/delete", DeleteView)
+        self.app.router.add_view("/update", ReLoginView)
 
     def run(self):
         web.run_app(self.app, host=self.config.interface_host, port=self.config.interface_port)

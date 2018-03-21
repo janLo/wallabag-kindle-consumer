@@ -3,19 +3,19 @@
 {% import 'macros.html' as forms %}
 
 {% block body %}
+    {{ forms.messages(errors=errors, messages=messages) }}
 
     <div class="card">
-        <div class="card-header">Fetch a new Wallabag API token</div>
+        <div class="card-header">{{ description }} an account</div>
         <div class="card-body">
-            <form>
+            <form method="post" action="/{{ action }}">
                 <div class="row">
-                    {{ forms.input('user', "Username", description='Your wallabag username at ' + wallabag_host) }}
-                    {{ forms.input('password', "Password", type='password', description='Your wallabag password at ' + wallabag_host + ". The password will not be stored") }}
+                    {{ forms.input('username', "Username", description='Your wallabag username at ' + wallabag_host, data=data, errors=errors) }}
+                    {{ forms.input('password', "Password", type='password', description='Your wallabag password at ' + wallabag_host + ". The password will not be stored", data=data, errors=errors) }}
                 </div>
-
                 <div class="row">
                     <div class="col-lg">
-                        <button type="submit" class="btn btn-primary">Register</button>
+                        <button type="submit" class="btn btn-primary">{{ description }}</button>
                     </div>
                 </div>
             </form>
