@@ -1,0 +1,7 @@
+{% macro input(id, label, type='text', description='', placeholder='') %}
+  <div class="form-group col-lg">
+    <label for="{{ id }}">{{ label }}</label>
+    <input type="{{ type }}" class="form-control form-control-sm" id="{{ id }}" aria-describedby="{{ id }}Help" placeholder="{{ placeholder }}">
+    <small id="{{ id }}Help" class="form-text text-muted">{{ description }}</small>
+  </div>
+{% endmacro %}
