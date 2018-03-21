@@ -3,17 +3,16 @@ from datetime import datetime, timedelta
 
 from logbook import Logger
 from sqlalchemy import func
-
-from wallabag_kindle_consumer.models import User
+from .models import  User, session_maker
 
 logger = Logger(__name__)
 
 
 class Refresher:
-    def __init__(self, session, wallabag):
-        self.session = session
+    def __init__(self, config, wallabag):
+        self.session = session_maker(config.db_uri)()
         self.wallabag = wallabag
-        self.grace = 120
+        self.grace = config.refresh_grace
 
     def _wait_time(self):
         next = self.session.query(func.min(User.token_valid).label("min")).first()
@@ -36,6 +35,7 @@ class Refresher:
             await asyncio.gather(*refreshes)
 
             self.session.commit()
+            self.session.remove()
 
     async def _refresh_user(self, user):
         logger.info("Refresh token for {}", user.name)

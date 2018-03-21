@@ -33,11 +33,11 @@ class Job(Base):
     format = Column(Enum('pdf', 'mobi'))
 
 
-def make_session(uri):
+def session_maker(uri):
     Session = sessionmaker(autocommit=False,
                            autoflush=False,
                            bind=create_engine(uri))
-    return scoped_session(Session)
+    return Session
 
 
 def re_create_db(uri):

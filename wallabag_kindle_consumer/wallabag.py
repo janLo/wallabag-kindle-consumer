@@ -53,6 +53,7 @@ class Wallabag:
                 user.auth_token = data["access_token"]
                 user.refresh_token = data["refresh_token"]
                 user.token_valid = datetime.utcnow() + timedelta(seconds=data["expires_in"])
+                logger.info("Got new token for {}", user.name)
 
                 return True
 
@@ -86,6 +87,9 @@ class Wallabag:
         return self.url + url
 
     async def fetch_entries(self, user):
+        if user.auth_token is None:
+            logger.warn("No auth token for {}".format(user.name))
+            return
         async with aiohttp.ClientSession() as session:
             for tag in self.tags:
                 params = self._api_params(user, {"tags": tag.tag})

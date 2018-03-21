@@ -4,16 +4,16 @@ import asyncio
 from logbook import Logger
 from sqlalchemy.orm import joinedload
 
-from wallabag_kindle_consumer.models import User, Job
+from wallabag_kindle_consumer.models import User, Job, session_maker
 
 logger = Logger(__name__)
 
 
 class Consumer:
-    def __init__(self, wallabag, session, sender, interval=30):
+    def __init__(self, wallabag, cfg, sender):
         self.wallabag = wallabag
-        self.session = session
-        self.interval = interval
+        self.session = session_maker(cfg.db_uri)()
+        self.interval = cfg.consume_interval
         self.sender = sender
         self.running = True
 
