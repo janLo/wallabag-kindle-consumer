@@ -1,3 +1,6 @@
+email_validator
+jinja2
+aiohttp_jinja2
 aiohttp
 sqlalchemy
 logbook
