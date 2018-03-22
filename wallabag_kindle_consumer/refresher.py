@@ -38,8 +38,7 @@ class Refresher:
                              in session.query(User).filter(User.active == True).filter(User.token_valid < ts).all()]
                 await asyncio.gather(*refreshes)
 
-            session.commit()
-            session.remove()
+                session.commit()
 
     async def _refresh_user(self, user):
         logger.info("Refresh token for {}", user.name)
