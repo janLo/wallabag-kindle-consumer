@@ -55,6 +55,11 @@ def session_maker(config):
     return Session
 
 
+def create_db(config):
+    engine = create_engine(config.db_uri)
+    Base.metadata.create_all(engine)
+
+
 def re_create_db(config):
     engine = create_engine(config.db_uri)
     Base.metadata.drop_all(engine)

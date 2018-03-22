@@ -8,6 +8,7 @@ import sys
 
 from logbook import Logger, StreamHandler
 
+from wallabag_kindle_consumer import models
 from wallabag_kindle_consumer.config import Config
 from wallabag_kindle_consumer.consumer import Consumer
 from wallabag_kindle_consumer.interface import App
@@ -26,6 +27,7 @@ def parse_args():
     parser.add_argument("--refresher", help="Start token refresher", action="store_true")
     parser.add_argument("--interface", help="Start web interface", action="store_true")
     parser.add_argument("--consumer", help="Start article consumer", action="store_true")
+    parser.add_argument("--create_db", help="Try to create the db", action="store_true")
 
     return parser.parse_args()
 
@@ -48,6 +50,10 @@ if __name__ == "__main__":
         new = Config.from_env()
         if new is not None:
             config = new
+
+    if args.create_db:
+        models.create_db(config)
+        logger.info("Database created.")
 
     wallabag = Wallabag(config)
     sender = Sender(loop, config.smtp_from, config.smtp_host, config.smtp_port, config.smtp_user, config.smtp_passwd)
