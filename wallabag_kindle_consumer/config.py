@@ -34,6 +34,8 @@ class Config:
 
     @staticmethod
     def from_file(filename):
+        logger.info("read config from file {file}", file=filename)
+
         if not os.path.exists(filename):
             logger.warn("Config file {filename} does not exist", filename=filename)
             return None
@@ -65,6 +67,7 @@ class Config:
 
     @staticmethod
     def from_env():
+        logger.info("Read config from environment")
         tmp = {}
         missing = []
         for key in Config.known_values:
@@ -72,7 +75,7 @@ class Config:
                 tmp[key] = os.environ[key.upper()]
             else:
                 if key in Config.required_values:
-                    missing.append(key)
+                    missing.append(key.upper())
 
         if 0 != len(missing):
             logger.warn("Environment config does not contain configs for: {lst}", lst=", ".join(missing))
