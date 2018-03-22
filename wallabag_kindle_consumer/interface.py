@@ -164,6 +164,7 @@ class ReLoginView(ViewBase):
                     self._add_errors({'user': 'User not registered'})
                 else:
                     if await self._wallabag.get_token(user, validator.password):
+                        user.active = True
                         session.commit()
                         self._add_message("User {user} successfully updated.".format(user=validator.username))
                         logger.info("User {user} successfully updated.", user=user)
