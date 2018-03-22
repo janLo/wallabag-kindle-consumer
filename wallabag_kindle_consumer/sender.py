@@ -3,7 +3,7 @@ from email.encoders import encode_base64
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.utils import formatdate
+from email.utils import formatdate, make_msgid
 
 from logbook import Logger
 
@@ -21,15 +21,19 @@ class Sender:
 
     def _send_mail(self, title, article, format, email, data):
         msg = MIMEMultipart()
-        msg['Subject'] = title
+        msg['Subject'] = "Send article {}".format(article)
         msg['From'] = self.from_addr
         msg['To'] = email
         msg['Date'] = formatdate(localtime=True)
+        msg['Message-ID'] = make_msgid('wallabag-kindle')
+
+        text = 'This email has been automatically sent.'
+        msg.attach(MIMEText(text))
 
         mobi = MIMEApplication(data)
         encode_base64(mobi)
-        mobi.add_header('Content-Disposition',
-                        'attachment; filename={id}.{format}'.format(id=article, format=format))
+        mobi.add_header('Content-Disposition', 'attachment',
+                        filename='article_{id}.{format}'.format(id=article, format=format))
 
         msg.attach(mobi)
 
