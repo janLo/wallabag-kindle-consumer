@@ -65,4 +65,17 @@ class Config:
 
     @staticmethod
     def from_env():
-        pass
+        tmp = {}
+        missing = []
+        for key in Config.known_values:
+            if key.upper() in os.environ:
+                tmp[key] = os.environ[key.upper()]
+            else:
+                if key in Config.required_values:
+                    missing.append(key)
+
+        if 0 != len(missing):
+            logger.warn("Environment config does not contain configs for: {lst}", lst=", ".join(missing))
+            return None
+
+        return Config(**tmp)
