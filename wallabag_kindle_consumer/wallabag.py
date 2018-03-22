@@ -47,7 +47,7 @@ class Wallabag:
         async with aiohttp.ClientSession() as session:
             async with session.get(self._url('/oauth/v2/token'), params=params) as resp:
                 if resp.status != 200:
-                    logger.warn("Gannot get token for user {user}", user=user.name)
+                    logger.warn("Cannot get token for user {user}", user=user.name)
                     return False
                 data = await resp.json()
                 user.auth_token = data["access_token"]
@@ -59,9 +59,9 @@ class Wallabag:
 
     async def refresh_token(self, user):
         params = {'grant_type': 'refresh_token',
-                  'client_id': user.client_id,
+                  'client_id': self.config.client_id,
                   'client_secret': self.config.client_secret,
-                  'refresh_token': self.config.refresh_token,
+                  'refresh_token': user.refresh_token,
                   'username': user.name}
 
         async with aiohttp.ClientSession() as session:
