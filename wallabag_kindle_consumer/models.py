@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, String, DateTime, Column, ForeignKey, Enum
+from sqlalchemy import Integer, String, DateTime, Column, ForeignKey, Enum, Boolean
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -17,6 +17,7 @@ class User(Base):
     last_check = Column(DateTime)
     email = Column(String)
     kindle_mail = Column(String)
+    active = Column(Boolean, default=True)
 
     jobs = relationship('Job', backref='user')
 

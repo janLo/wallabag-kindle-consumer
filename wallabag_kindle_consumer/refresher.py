@@ -10,13 +10,15 @@ logger = Logger(__name__)
 
 
 class Refresher:
-    def __init__(self, config, wallabag):
+    def __init__(self, config, wallabag, sender):
         self.sessionmaker = context_session(config)
         self.wallabag = wallabag
         self.grace = config.refresh_grace
+        self.sender = sender
+        self.config = config
 
     def _wait_time(self, session):
-        next = session.query(func.min(User.token_valid).label("min")).first()
+        next = session.query(func.min(User.token_valid).label("min")).filter(User.active == True).first()
         if next is None or next.min is None:
             return 3
         delta = next.min - datetime.utcnow()
@@ -33,7 +35,7 @@ class Refresher:
 
                 ts = datetime.utcnow() + timedelta(seconds=self.grace)
                 refreshes = [self._refresh_user(user) for user
-                             in session.query(User).filter(User.token_valid < ts).all()]
+                             in session.query(User).filter(User.active == True).filter(User.token_valid < ts).all()]
                 await asyncio.gather(*refreshes)
 
             session.commit()
@@ -41,4 +43,6 @@ class Refresher:
 
     async def _refresh_user(self, user):
         logger.info("Refresh token for {}", user.name)
-        await self.wallabag.refresh_token(user)
+        if not await self.wallabag.refresh_token(user):
+            await self.sender.send_warning(user, self.config)
+            user.active = False

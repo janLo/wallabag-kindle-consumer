@@ -35,7 +35,7 @@ class Consumer:
         while self.running:
             with self.sessionmaker as session:
                 logger.info("Start consume run")
-                fetches = [self.fetch_jobs(user) for user in session.query(User).all()]
+                fetches = [self.fetch_jobs(user) for user in session.query(User).filter(User.active == True).all()]
                 await asyncio.gather(*fetches)
                 session.commit()
 
