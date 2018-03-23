@@ -18,7 +18,7 @@ class Consumer:
         self.running = True
 
     async def fetch_jobs(self, user):
-        logger.info("Fetch entries for user {}", user.name)
+        logger.debug("Fetch entries for user {}", user.name)
         async for entry in self.wallabag.fetch_entries(user):
             logger.info("Schedule job to send entry {}", entry.id)
             job = Job(article=entry.id, title=entry.title, format=entry.tag.format)
@@ -34,7 +34,7 @@ class Consumer:
     async def consume(self):
         while self.running:
             with self.sessionmaker as session:
-                logger.info("Start consume run")
+                logger.debug("Start consume run")
                 fetches = [self.fetch_jobs(user) for user in session.query(User).filter(User.active == True).all()]
                 await asyncio.gather(*fetches)
                 session.commit()
