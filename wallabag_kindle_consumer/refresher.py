@@ -17,6 +17,9 @@ class Refresher:
         self.sender = sender
         self.config = config
 
+        self._running = True
+        self._wait_fut = None  # type: asyncio.Future
+
     def _wait_time(self, session):
         next = session.query(func.min(User.token_valid).label("min")).filter(User.active == True).first()
         if next is None or next.min is None:
@@ -29,9 +32,15 @@ class Refresher:
         return calculated.total_seconds()
 
     async def refresh(self):
-        while True:
+        while self._running:
             with self.sessionmaker as session:
-                await asyncio.sleep(self._wait_time(session))
+                self._wait_fut = asyncio.sleep(self._wait_time(session))
+                try:
+                    await self._wait_fut
+                except asyncio.CancelledError:
+                    continue
+                finally:
+                    self._wait_fut = None
 
                 ts = datetime.utcnow() + timedelta(seconds=self.grace)
                 refreshes = [self._refresh_user(user) for user
@@ -45,3 +54,8 @@ class Refresher:
         if not await self.wallabag.refresh_token(user):
             await self.sender.send_warning(user, self.config)
             user.active = False
+
+    def stop(self):
+        self._running = False
+        if self._wait_fut is not None:
+            self._wait_fut.cancel()
