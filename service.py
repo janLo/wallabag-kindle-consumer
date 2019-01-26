@@ -70,6 +70,8 @@ if __name__ == "__main__":
         for cb in on_stop:
             cb()
 
+        loop.stop()
+
 
     loop.add_signal_handler(signal.SIGTERM, _stop)
     loop.add_signal_handler(signal.SIGINT, _stop)
@@ -92,6 +94,7 @@ if __name__ == "__main__":
     if args.interface:
         logger.info("Create Interface")
         webapp = App(config, wallabag)
-        loop.create_task(webapp.register_server(loop))
+        loop.create_task(webapp.register_server())
+        on_stop.append(lambda: webapp.stop())
 
     loop.run_forever()
