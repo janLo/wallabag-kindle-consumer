@@ -2,6 +2,7 @@
 
 import argparse
 import asyncio
+import signal
 
 import logbook
 import uvloop
@@ -62,6 +63,17 @@ if __name__ == "__main__":
         models.create_db(config)
         logger.info("Database created.")
 
+    on_stop = []
+
+
+    def _stop():
+        for cb in on_stop:
+            cb()
+
+
+    loop.add_signal_handler(signal.SIGTERM, _stop)
+    loop.add_signal_handler(signal.SIGINT, _stop)
+
     wallabag = Wallabag(config)
     sender = Sender(loop, config.smtp_from, config.smtp_host, config.smtp_port, config.smtp_user, config.smtp_passwd)
 
@@ -69,11 +81,13 @@ if __name__ == "__main__":
         logger.info("Create Refresher")
         refresher = Refresher(config, wallabag, sender)
         loop.create_task(refresher.refresh())
+        on_stop.append(lambda: refresher.stop())
 
     if args.consumer:
         logger.info("Create Consumer")
         consumer = Consumer(wallabag, config, sender)
         loop.create_task(consumer.consume())
+        on_stop.append(lambda: consumer.stop())
 
     if args.interface:
         logger.info("Create Interface")
