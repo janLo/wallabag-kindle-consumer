@@ -210,6 +210,7 @@ class App:
         self.config = config
         self.wallabag = wallabag
         self.app = web.Application()
+        self.site = None  # type: web.TCPSite
 
         self.setup_app()
         self.setup_routes()
@@ -234,6 +235,12 @@ class App:
     def run(self):
         web.run_app(self.app, host=self.config.interface_host, port=self.config.interface_port)
 
-    async def register_server(self, loop):
-        await loop.create_server(self.app.make_handler(access_log=logger),
-                                 self.config.interface_host, self.config.interface_port)
+    async def register_server(self):
+        app_runner = web.AppRunner(self.app, access_log=logger)
+        await app_runner.setup()
+        self.site = web.TCPSite(app_runner, self.config.interface_host, self.config.interface_port)
+        await self.site.start()
+
+    def stop(self):
+        if self.site is not None:
+            asyncio.get_event_loop().create_task(self.site.stop())
