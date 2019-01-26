@@ -34,7 +34,7 @@ class Refresher:
     async def refresh(self):
         while self._running:
             with self.sessionmaker as session:
-                self._wait_fut = asyncio.sleep(self._wait_time(session))
+                self._wait_fut = asyncio.ensure_future(asyncio.sleep(self._wait_time(session)))
                 try:
                     await self._wait_fut
                 except asyncio.CancelledError:
