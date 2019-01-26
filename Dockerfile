@@ -1,4 +1,4 @@
-FROM python:3.6-alpine3.7
+FROM python:3.7-alpine
 MAINTAINER Jan Losinski <losinski@wh2.tu-dresden.de>
 
 ADD requirements.txt /tmp
