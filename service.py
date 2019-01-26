@@ -3,6 +3,7 @@
 import argparse
 import asyncio
 
+import logbook
 import uvloop
 import sys
 
@@ -16,7 +17,6 @@ from wallabag_kindle_consumer.refresher import Refresher
 from wallabag_kindle_consumer.sender import Sender
 from wallabag_kindle_consumer.wallabag import Wallabag
 
-StreamHandler(sys.stdout).push_application()
 logger = Logger("kindle-consumer")
 
 
@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument("--interface", help="Start web interface", action="store_true")
     parser.add_argument("--consumer", help="Start article consumer", action="store_true")
     parser.add_argument("--create_db", help="Try to create the db", action="store_true")
+    parser.add_argument("--debug", help="Enable debug logging", action="store_true")
 
     return parser.parse_args()
 
@@ -38,6 +39,12 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
 
     args = parse_args()
+
+    level = logbook.INFO
+    if args.debug:
+        level = logbook.DEBUG
+
+    StreamHandler(sys.stdout, level=level).push_application()
 
     config = Config.from_file("config.ini")
 
