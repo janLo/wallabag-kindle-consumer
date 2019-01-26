@@ -136,7 +136,7 @@ class IndexView(ViewBase):
                 else:
                     session.add(user)
                     session.commit()
-                    self._add_message("User {user} successfully registered".format(user=validator.username))
+                    self._add_message(f'User {validator.username} successfully registered')
                     self._set_data({})
                     logger.info("User {user} registered", user=validator.username)
 
@@ -166,7 +166,7 @@ class ReLoginView(ViewBase):
                     if await self._wallabag.get_token(user, validator.password):
                         user.active = True
                         session.commit()
-                        self._add_message("User {user} successfully updated.".format(user=validator.username))
+                        self._add_message(f"User {validator.username} successfully updated.")
                         logger.info("User {user} successfully updated.", user=user)
                     else:
                         self._add_errors({'auth': "Authentication against wallabag server failed"})
@@ -197,7 +197,7 @@ class DeleteView(ViewBase):
                     if await self._wallabag.get_token(user, validator.password):
                         session.delete(user)
                         session.commit()
-                        self._add_message("User {user} successfully deleted.".format(user=validator.username))
+                        self._add_message(f"User {validator.username} successfully deleted.")
                         logger.info("User {user} successfully deleted.", user=user)
                     else:
                         self._add_errors({'auth': "Authentication against wallabag server failed"})
