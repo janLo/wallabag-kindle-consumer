@@ -33,7 +33,7 @@ class Sender:
         mobi = MIMEApplication(data)
         encode_base64(mobi)
         mobi.add_header('Content-Disposition', 'attachment',
-                        filename='article_{id}.{format}'.format(id=article, format=format))
+                        filename='{title}.{format}'.format(title=title, format=format))
 
         msg.attach(mobi)
 
@@ -43,7 +43,8 @@ class Sender:
             smtp.login(self.user, self.passwd)
         smtp.sendmail(self.from_addr, [email], msg.as_string())
         smtp.quit()
-        logger.info("Mail with article {article} in format {format} sent to {email}".format(article=article,
+        logger.info("Mail with article {article} in format {format} with title {title} sent to {email}".format(article=article,
+                                                                                            title=title,
                                                                                             format=format,
                                                                                             email=email))
 

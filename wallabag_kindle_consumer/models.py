@@ -29,7 +29,7 @@ class Job(Base):
     article = Column(Integer)
     title = Column(String)
     user_name = Column(Integer, ForeignKey("user.name"))
-    format = Column(Enum('pdf', 'mobi'))
+    format = Column(Enum('pdf', 'mobi', 'epub'))
 
 
 class ContextSession:
