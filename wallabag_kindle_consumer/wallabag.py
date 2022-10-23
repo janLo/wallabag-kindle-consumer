@@ -26,7 +26,8 @@ Tag = namedtuple('Tag', ['tag', 'format'])
 
 
 def make_tags(tag):
-    return (Tag(tag='{tag}'.format(tag=tag), format='mobi'),
+    return (Tag(tag='{tag}'.format(tag=tag), format='epub'),
+            Tag(tag='{tag}-epub'.format(tag=tag), format='epub'),
             Tag(tag='{tag}-mobi'.format(tag=tag), format='mobi'),
             Tag(tag='{tag}-pdf'.format(tag=tag), format='pdf'))
 
