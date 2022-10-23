@@ -46,7 +46,7 @@ class Wallabag:
                   'password': passwd}
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(self._url('/oauth/v2/token'), params=params) as resp:
+            async with session.post(self._url('/oauth/v2/token'), json=params) as resp:
                 if resp.status != 200:
                     logger.warn("Cannot get token for user {user}", user=user.name)
                     return False
@@ -66,7 +66,7 @@ class Wallabag:
                   'username': user.name}
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(self._url('/oauth/v2/token'), params=params) as resp:
+            async with session.post(self._url('/oauth/v2/token'), json=params) as resp:
                 if resp.status != 200:
                     logger.warn("Cannot refresh token for user {user}", user=user.name)
                     return False
