@@ -37,8 +37,7 @@ class Sender:
 
         msg.attach(mobi)
 
-        smtp = smtplib.SMTP(host=self.host, port=self.port)
-        smtp.starttls()
+        smtp = smtplib.SMTP_SSL(host=self.host, port=self.port)
         if self.user is not None:
             smtp.login(self.user, self.passwd)
         smtp.sendmail(self.from_addr, [email], msg.as_string())
