@@ -1,4 +1,5 @@
 FROM python:3.7-alpine
+# MANTAINER instructions is deprecated TODO: use labels
 MAINTAINER Jan Losinski <losinski@wh2.tu-dresden.de>
 
 ADD requirements.txt /tmp
