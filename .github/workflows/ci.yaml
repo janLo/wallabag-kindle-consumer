@@ -41,7 +41,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-
   changelog:
     needs: build-and-push-image
     runs-on: ubuntu-latest
