@@ -18,10 +18,6 @@ jobs:
       pull-requests: write
 
       steps:
-
-        - name: Create and change to branch release
-          run:  git checkout -b release
-
         - name: checkout
           uses: actions/checkout@v2
           run: git checkout -b release
