@@ -1,6 +1,9 @@
-name: Create and publish a Docker image
+name: Create and publish a Docker image - Release
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 env:
   REGISTRY: ghcr.io
@@ -37,3 +40,27 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+
+  changelog:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@2
+
+      - name: conventional Changelog Action
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3.7.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: create release
+        uses: actions/create-release@v1
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.changelog.outputs.tag }}
+          release_name: ${{ steps.changelog.outputs.tag }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
