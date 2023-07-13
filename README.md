@@ -79,7 +79,7 @@ To initialize the database, run the server once with `--create_db`.
 ## Docker
 
 The provided dockerfile makes it easy to use the software as a docker
-container. The latest state of the master branch can be found as a 
+container. The latest state of the master branch can be found as a
 [Automated build on the Docker hub](https://hub.docker.com/r/janlo/wallabag-kindle-consumer).
 
 You can easily configure the container via the environment variables from
@@ -97,3 +97,4 @@ the wallabag server.
 ## License
 
 MIT
+
