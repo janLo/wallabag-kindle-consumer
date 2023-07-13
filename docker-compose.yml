@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+
+  wallabag-kindle-consumer:
+      # TODO: Fork and tag releases.
+      image: ghcr.io/natilou/wallabag-kindle-consumer:master
+      container_name: wallabag-kindle-consumer
+      restart: unless-stopped
+      environment:
+        - DB_URI=sqlite:////data/sqlite.db
+        - DOMAIN=https://wallabag-kindle-consumer.local.adamantike.dev
+        - INTERFACE_HOST=0.0.0.0
+        - SMTP_FROM=wallabag-kindle-consumer@adamantike.dev
+        - SMTP_HOST=postfix
+        - SMTP_PORT=587
+        - SMTP_USER=
+        - SMTP_PASSWD=
+        # TODO: This is a custom variable added to avoid `smtp.starttls()` calls. Refactor code or fix postfix.
+        - SMTP_TLS=0
+        - TAG=kindle
+        - WALLABAG_HOST=https://wallabag.local.adamantike.dev
+        - CLIENT_ID=7_3by9zusd5sao8ssow4g4c08k8gs4o4cw4o0cwkos0kowg0sc4k
+        - CLIENT_SECRET=38zxawyt05k4go08s8s8w4k0s4c8k004goc08s0gc8ooks4gsg
+      volumes:
+        - .:/data
+      ports:
+        - 8080:8080
