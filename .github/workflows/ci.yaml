@@ -18,10 +18,6 @@ jobs:
       pull-requests: write
 
       steps:
-        - name: checkout
-          uses: actions/checkout@v2
-          run: git checkout -b release
-
         - name: conventional Changelog Action
           id: changelog
           uses: TriPSs/conventional-changelog-action@v3
