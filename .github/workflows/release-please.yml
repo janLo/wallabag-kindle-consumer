@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - name: release-please
+        id: release
+        uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: simple
+          package-name: release
+          bump-minor-pre-major: true
+          token: ${{ secrets.PAT }}
