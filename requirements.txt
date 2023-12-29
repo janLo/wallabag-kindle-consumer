@@ -5,3 +5,4 @@ aiohttp_jinja2
 aiohttp
 sqlalchemy
 logbook
+psycopg2-binary

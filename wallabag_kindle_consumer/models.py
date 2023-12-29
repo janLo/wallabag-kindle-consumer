@@ -28,8 +28,8 @@ class Job(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     article = Column(Integer)
     title = Column(String)
-    user_name = Column(Integer, ForeignKey("user.name"))
-    format = Column(Enum('pdf', 'mobi', 'epub'))
+    user_name = Column(String, ForeignKey("user.name"))
+    format = Column(Enum('pdf', 'mobi', 'epub', name='format_enum'))
 
 
 class ContextSession:
