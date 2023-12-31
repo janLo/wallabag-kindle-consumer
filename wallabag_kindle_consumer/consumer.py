@@ -60,7 +60,7 @@ class Consumer:
                 await asyncio.gather(*fetches)
                 session.commit()
 
-                jobs = [self.process_job(job, session) for job in session.query(Job).options(joinedload('user'))]
+                jobs = [self.process_job(job, session) for job in session.query(Job).options(joinedload(Job.user))]
                 await asyncio.gather(*jobs)
                 session.commit()
 
